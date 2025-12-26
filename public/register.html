@@ -1,30 +1,75 @@
-<!-- Verifique apenas a parte do <script> no seu arquivo -->
-<script>
-    async function handleRegister() {
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchZone | Criar Conta</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
 
-        if(!username || !email || !password) return alert("Preencha todos os campos");
+    <div class="login-box">
+        <h2>Criar Conta <span style="color: #00e676;">MatchZone</span></h2>
+        
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Nome de utilizador" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="password" placeholder="Palavra-passe" required>
+        </div>
 
-        try {
-            // O caminho '/api/auth/register' deve ser exatamente este
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
-            });
+        <!-- type="button" impede o recarregamento indesejado da página -->
+        <button type="button" class="primary" id="btn-register" onclick="handleRegister()">
+            Registar
+        </button>
 
-            const data = await res.json();
-            
-            if (res.ok) {
-                alert("Conta criada com sucesso! Faça login.");
-                window.location.href = '/login.html';
-            } else {
-                alert(data.message || 'Erro ao registar');
+        <p style="margin-top: 15px; font-size: 0.8rem;">
+            Já tens conta? <a href="/login.html" style="color: #00e676; text-decoration: none;">Entra aqui</a>
+        </p>
+    </div>
+
+    <script>
+        async function handleRegister() {
+            const btn = document.getElementById('btn-register');
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if(!username || !email || !password) {
+                return alert("Por favor, preencha todos os campos.");
             }
-        } catch (err) {
-            alert("Erro ao conectar com o servidor. Tente novamente.");
+
+            // Desativa o botão para evitar cliques duplos
+            btn.disabled = true;
+            btn.innerText = "A processar...";
+
+            try {
+                // Rota absoluta relativa para o backend v1.1.0
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await res.json();
+                
+                if (res.ok) {
+                    alert("✅ Conta criada com sucesso! Redirecionando para login...");
+                    window.location.href = '/login.html';
+                } else {
+                    alert("❌ Erro: " + (data.message || "Falha no registo"));
+                    btn.disabled = false;
+                    btn.innerText = "Registar";
+                }
+            } catch (err) {
+                console.error("Erro na requisição:", err);
+                alert("❌ Erro ao conectar com o servidor. Verifique a sua ligação.");
+                btn.disabled = false;
+                btn.innerText = "Registar";
+            }
         }
-    }
-</script>
+    </script>
+</body>
+</html>
