@@ -1,13 +1,54 @@
 /* ==========================================
-   SISTEMA DE NAVEGAÇÃO E PERFIL (v1.1.3)
+   SISTEMA DE NAVEGAÇÃO E MENU (v1.1.4)
 ========================================== */
 
+// 1. Função para abrir/fechar o menu lateral (Mobile)
+function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+  }
+}
+
+// 2. Função para trocar entre Home, Perfil, Rankings, etc.
+function showSection(id, el) {
+  // Esconde todas as seções
+  document.querySelectorAll('.section').forEach(s => {
+    s.classList.add('hidden');
+  });
+
+  // Mostra a seção clicada
+  const target = document.getElementById(id);
+  if (target) {
+    target.classList.remove('hidden');
+  }
+
+  // Atualiza a cor do botão no menu lateral
+  document.querySelectorAll('.sidebar-nav a').forEach(a => {
+    a.classList.remove('active');
+  });
+  if (el) el.classList.add('active');
+
+  // Se estiver no telemóvel, fecha o menu após clicar
+  if (window.innerWidth < 900) {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      toggleMenu();
+    }
+  }
+}
+
+/* ==========================================
+   DADOS DO PERFIL E AUTENTICAÇÃO
+========================================== */
 const token = localStorage.getItem("token");
 
-// Carrega os dados reais do jogador após o Login
 async function loadProfile() {
   if (!token) {
-    // Se não houver token, redireciona para o login apenas se não estiver lá
+    // Redireciona para login se não estiver autenticado
     if (!window.location.pathname.includes('login.html') && !window.location.pathname.includes('register.html')) {
         window.location.href = "/login.html";
     }
@@ -21,7 +62,7 @@ async function loadProfile() {
 
     if (res.ok) {
       const user = await res.json();
-      // Atualiza o nome no Dashboard
+      // Atualiza o nome no Perfil
       const profileName = document.querySelector("#profile h2");
       if (profileName) profileName.innerHTML = `${user.username} <span class="verified">✔</span>`;
       
@@ -29,26 +70,7 @@ async function loadProfile() {
       if (profileAt) profileAt.innerText = `@${user.username.toLowerCase()}`;
     }
   } catch (err) {
-    console.error("Erro ao carregar dados do servidor.");
-  }
-}
-
-// Troca entre Home, Perfil, Ranking, etc.
-function showSection(id, el) {
-  const sections = document.querySelectorAll('.section');
-  sections.forEach(s => s.classList.add('hidden'));
-
-  const target = document.getElementById(id);
-  if (target) target.classList.remove('hidden');
-
-  const links = document.querySelectorAll('.sidebar-nav a');
-  links.forEach(a => a.classList.remove('active'));
-  if (el) el.classList.add('active');
-
-  // Fecha o menu no telemóvel ao clicar
-  if (window.innerWidth < 900) {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar) sidebar.classList.remove('open');
+    console.error("Erro ao carregar dados do perfil.");
   }
 }
 
@@ -57,11 +79,11 @@ function logout() {
   window.location.href = "/login.html";
 }
 
-// Inicializa o sistema
+// Inicializa tudo quando a página carrega
 document.addEventListener('DOMContentLoaded', () => {
   loadProfile();
   
-  // Evento de Logout se o botão existir
+  // Configura o clique no botão de logout da sidebar
   const logoutBtn = document.querySelector('.logout');
   if (logoutBtn) logoutBtn.onclick = logout;
 });
