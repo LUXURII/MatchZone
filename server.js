@@ -6,35 +6,34 @@ const path = require('path');
 
 const app = express();
 
-// 1. Middlewares de Base
+// 1. Configurações de Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 2. Rota de Health Check (Sinal de vida para o Railway)
+// 2. Rota de Health Check (Crucial para o Railway manter o site online)
 app.get('/health', (req, res) => res.status(200).send('OK'));
 
-// 3. Definição das Rotas da API
+// 3. Rotas da API
 app.use('/api/auth', require('./routes/authRoutes'));
 
-// 4. Rota Principal (Entrega o Frontend)
+// 4. Rota Principal
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 5. INICIALIZAÇÃO IMEDIATA (O segredo para 2025)
+// 5. Inicialização do Servidor
 const PORT = process.env.PORT || 8080;
 
-// O servidor começa a ouvir a porta ANTES de tentar ligar à base de dados
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 MatchZone Online na porta ${PORT}`);
   
-  // 6. Conexão com o MongoDB em segundo plano (Não trava o boot)
+  // 6. Conexão ao MongoDB Atlas (Usando as novas credenciais das variáveis)
   if (process.env.MONGO_URI) {
     mongoose.connect(process.env.MONGO_URI)
-      .then(() => console.log('✅ Base de Dados Conectada'))
+      .then(() => console.log('✅ Base de Dados Conectada com a nova senha'))
       .catch(err => console.error('❌ Erro de Conexão DB:', err));
   } else {
-    console.error('❌ Erro: MONGO_URI não configurada nas variáveis do Railway.');
+    console.error('❌ Erro: MONGO_URI não encontrada nas variáveis de ambiente.');
   }
 });
