@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>MatchZone | Registo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-body">
+    <div class="login-box">
+        <h2>Criar Conta <span style="color: #00e676;">MatchZone</span></h2>
+        <input type="text" id="username" placeholder="Nome de utilizador" required>
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="password" id="password" placeholder="Palavra-passe" required>
+        <button class="primary" onclick="handleRegister()">Registar</button>
+        <p style="margin-top: 15px; font-size: 0.8rem;">Já tens conta? <a href="/login.html" style="color: #00e676;">Entra aqui</a></p>
+    </div>
+
+    <script>
+        async function handleRegister() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if(!username || !email || !password) return alert("Preencha todos os campos");
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await res.json();
+                
+                if (res.ok) {
+                    alert("Conta criada com sucesso!");
+                    window.location.href = '/login.html';
+                } else {
+                    alert(data.message || 'Erro ao registar');
+                }
+            } catch (err) {
+                alert("Erro ao conectar com o servidor");
+            }
+        }
+    </script>
+</body>
+</html>
