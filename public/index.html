@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <title>MatchZone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">MATCH<span>ZONE</span></div>
+
+    <nav class="sidebar-nav">
+      <a class="active" onclick="showSection('home', this)">Home</a>
+      <a onclick="showSection('profile', this)">Perfil</a>
+      <a onclick="showSection('rankings', this)">Rankings</a>
+      <a onclick="showSection('live', this)">Live</a>
+      <a onclick="showSection('arena', this)">Arena</a>
+      <a onclick="showSection('chat', this)">Chat</a>
+    </nav>
+
+    <div class="logout">Logout</div>
+  </aside>
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <!-- MAIN -->
+  <main class="app">
+
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      <div class="topbar-right">
+        <span>🔔</span>
+        <img class="avatar" src="https://i.pravatar.cc/40" />
+      </div>
+    </div>
+
+    <section id="home" class="section">
+      <h1>Elite Football Arena</h1>
+      <div class="stats-grid">
+        <div class="stat-card">🤖 AI Analyst</div>
+        <div class="stat-card">🎮 Arena</div>
+      </div>
+      <div class="highlight-banner">Bons momentos da semana</div>
+    </section>
+
+    <section id="profile" class="section hidden">
+      <div class="profile-card">
+        <img src="https://i.pravatar.cc/100" />
+        <h2>PlayerX <span class="verified">✔</span></h2>
+        <p class="muted">@playerx</p>
+        <div class="profile-stats">
+          <div><strong>Rank</strong><span>#12</span></div>
+          <div><strong>ELO</strong><span>1890</span></div>
+          <div><strong>Wins</strong><span>124</span></div>
+        </div>
+        <button class="primary">Follow</button>
+      </div>
+    </section>
+
+    <section id="rankings" class="section hidden">
+      <h2>Rankings</h2>
+      <ul id="ranking-list"></ul>
+    </section>
+
+    <section id="live" class="section hidden">
+      <div class="live-player">
+        <span class="badge">LIVE</span>
+        <p>Player X vs Player Y</p>
+        <small>1080p · 1.2k espectadores</small>
+      </div>
+    </section>
+
+    <section id="arena" class="section hidden">
+      <div class="card">Desafios em tempo real</div>
+    </section>
+
+    <section id="chat" class="section hidden">
+      <div id="chat-messages"></div>
+      <input id="chat-input" placeholder="Escreve uma mensagem..." />
+    </section>
+
+    <footer class="footer">© MatchZone · Powered by AI</footer>
+
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
