@@ -1,132 +1,67 @@
-/* ===============================
-   PROTEÇÃO DE ROTA (2025)
-================================ */
+/* ==========================================
+   SISTEMA DE NAVEGAÇÃO E PERFIL (v1.1.3)
+========================================== */
+
 const token = localStorage.getItem("token");
-if (!token) {
-  // Se não houver token, redireciona para o login
-  window.location.href = "/login.html";
+
+// Carrega os dados reais do jogador após o Login
+async function loadProfile() {
+  if (!token) {
+    // Se não houver token, redireciona para o login apenas se não estiver lá
+    if (!window.location.pathname.includes('login.html') && !window.location.pathname.includes('register.html')) {
+        window.location.href = "/login.html";
+    }
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/auth/me", {
+      headers: { "x-auth-token": token }
+    });
+
+    if (res.ok) {
+      const user = await res.json();
+      // Atualiza o nome no Dashboard
+      const profileName = document.querySelector("#profile h2");
+      if (profileName) profileName.innerHTML = `${user.username} <span class="verified">✔</span>`;
+      
+      const profileAt = document.querySelector("#profile .muted");
+      if (profileAt) profileAt.innerText = `@${user.username.toLowerCase()}`;
+    }
+  } catch (err) {
+    console.error("Erro ao carregar dados do servidor.");
+  }
 }
 
-/* ===============================
-   NAVEGAÇÃO & MENU
-================================ */
+// Troca entre Home, Perfil, Ranking, etc.
 function showSection(id, el) {
-  // Esconde todas as seções
-  document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+  const sections = document.querySelectorAll('.section');
+  sections.forEach(s => s.classList.add('hidden'));
 
-  // Mostra a seção desejada
   const target = document.getElementById(id);
   if (target) target.classList.remove('hidden');
 
-  // Atualiza classe ativa no menu
-  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  const links = document.querySelectorAll('.sidebar-nav a');
+  links.forEach(a => a.classList.remove('active'));
   if (el) el.classList.add('active');
 
-  // Fecha menu no mobile se estiver aberto
+  // Fecha o menu no telemóvel ao clicar
   if (window.innerWidth < 900) {
     const sidebar = document.getElementById('sidebar');
-    if (sidebar.classList.contains('open')) toggleMenu();
+    if (sidebar) sidebar.classList.remove('open');
   }
 }
 
-function toggleMenu() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('active');
-}
-
-/* ===============================
-   CARREGAR PERFIL (VIA API REFORMULADA)
-================================ */
-async function loadProfile() {
-  try {
-    // ❗ ATENÇÃO: Ajustado para o caminho correto do novo server: /api/auth/me
-    const res = await fetch("/api/auth/me", {
-      headers: {
-        "x-auth-token": token // ❗ ATENÇÃO: Ajustado para o padrão do novo middleware
-      }
-    });
-
-    if (!res.ok) throw new Error("Sessão expirada");
-
-    const user = await res.json();
-
-    // Atualiza o Visual com dados reais do MongoDB
-    const userDisplay = document.querySelector("#profile h2");
-    if (userDisplay) {
-        userDisplay.innerHTML = `${user.username} <span class="verified">✔</span>`;
-    }
-
-    const handleDisplay = document.querySelector("#profile .muted");
-    if (handleDisplay) {
-        handleDisplay.innerText = `@${user.username.toLowerCase()}`;
-    }
-
-  } catch (err) {
-    console.error("Erro no perfil:", err);
-    // Em caso de token inválido, desloga por segurança
-    // logout(); 
-  }
-}
-
-/* ===============================
-   RANKING (VIA API)
-================================ */
-async function fetchGlobalRanking() {
-  try {
-    const r = await fetch('/api/ranking/global');
-    if (!r.ok) return;
-    const data = await r.json();
-    const ul = document.getElementById('ranking-list');
-    if (!ul) return;
-    
-    ul.innerHTML = '';
-    data.forEach((p, i) => {
-      const li = document.createElement('li');
-      li.textContent = `#${i + 1} ${p.username} — ${p.eloScore}`;
-      ul.appendChild(li);
-    });
-  } catch {
-    const ul = document.getElementById('ranking-list');
-    if (ul) ul.innerHTML = '<li>Ranking indisponível</li>';
-  }
-}
-
-/* ===============================
-   CHAT LOCAL (MANTER)
-================================ */
-const chatBox = document.getElementById("chat-messages");
-const input = document.getElementById("chat-input");
-
-if (input) {
-  input.addEventListener("keypress", e => {
-    if (e.key === "Enter" && input.value) {
-      const d = document.createElement("div");
-      d.className = "message"; // Estilize no CSS
-      d.textContent = input.value;
-      chatBox.appendChild(d);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      input.value = "";
-    }
-  });
-}
-
-/* ===============================
-   LOGOUT
-================================ */
 function logout() {
   localStorage.removeItem("token");
   window.location.href = "/login.html";
 }
 
-/* ===============================
-   INICIALIZAÇÃO AO CARREGAR
-================================ */
+// Inicializa o sistema
 document.addEventListener('DOMContentLoaded', () => {
-  // Carrega os dados iniciais
   loadProfile();
-  fetchGlobalRanking();
   
-  // Adiciona evento de logout no botão
+  // Evento de Logout se o botão existir
   const logoutBtn = document.querySelector('.logout');
   if (logoutBtn) logoutBtn.onclick = logout;
 });
