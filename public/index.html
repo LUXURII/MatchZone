@@ -2,15 +2,9 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <title>MatchZone | Plataforma Competitiva</title>
+  <title>MatchZone | Elite eSports</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/style.css" />
-  <style>
-    .benefit-card, .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #00ff88; }
-    .hero { text-align: center; padding: 30px 15px; background: linear-gradient(180deg, rgba(0,255,136,0.1) 0%, rgba(0,0,0,0) 100%); margin-bottom: 20px; }
-    .badge { background: #00ff88; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
-    .hidden { display: none; }
-  </style>
 </head>
 <body>
 <div class="layout">
@@ -26,38 +20,73 @@
     </nav>
     <div class="logout">Sair</div>
   </aside>
-  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-  <main class="app">
-    <div class="topbar"><button class="menu-btn" onclick="toggleMenu()">☰</button></div>
 
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+  <main class="app">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      <div class="topbar-right">
+        <span style="font-size: 1.2rem; cursor:pointer;">🔔</span>
+        <img class="avatar" src="" id="topbar-avatar" style="width:35px; height:35px; border-radius:50%; margin-left:10px; border: 2px solid #00ff88;" />
+      </div>
+    </div>
+
+    <!-- SEÇÕES -->
     <section id="home" class="section">
       <div class="hero"><h1>MatchZone</h1><p>A Arena Competitiva de 2025.</p></div>
       <div class="benefit-card"><strong id="user-count-display">Carregando...</strong></div>
     </section>
 
     <section id="profile" class="section hidden">
-      <div class="profile-card" style="text-align:center">
+      <div class="profile-card">
         <img src="" id="profile-avatar" style="border-radius:50%; width:100px; height:100px; object-fit:cover; border:3px solid #00ff88" />
         <h2 id="userNameDisplay">...</h2>
-        <p id="profile-bio"></p>
+        <p id="profile-bio" style="margin: 10px 0; opacity: 0.8; font-size: 0.9rem;"></p>
+        <div class="profile-stats" style="display:flex; justify-content:space-around; margin:15px 0;">
+           <div><strong>ELO</strong><br><span id="profile-elo">0</span></div>
+           <div><strong>V</strong><br><span id="profile-wins">0</span></div>
+        </div>
         <button class="primary" onclick="showSection('edit-profile')">Editar Perfil</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button style="flex: 1; background: #008f4b; color: white; border: none; padding: 10px; border-radius: 8px; cursor:pointer;">+ Seguir</button>
+            <button style="flex: 1; background: #333; color: white; border: none; padding: 10px; border-radius: 8px; cursor:pointer;">✉️ Mensagem</button>
+        </div>
       </div>
     </section>
 
     <section id="edit-profile" class="section hidden">
         <div class="card">
+            <h3>Editar Perfil</h3>
             <label>Foto da Galeria:</label>
-            <input type="file" id="edit-avatar-file" accept="image/*" style="width:100%; margin-bottom:15px">
+            <input type="file" id="edit-avatar-file" accept="image/*" style="width:100%; margin:10px 0;">
             <label>Biografia:</label>
-            <textarea id="edit-bio" rows="3" style="width:100%; margin-bottom:15px; background:#222; color:#fff; border-radius:8px"></textarea>
+            <textarea id="edit-bio" rows="3" style="width:100%; background:#222; color:#fff; border-radius:8px; padding:10px;"></textarea>
             <button class="primary" id="save-profile-btn" onclick="saveProfileChanges()">Salvar Alterações</button>
         </div>
     </section>
 
-    <section id="rankings" class="section hidden"><div id="ranking-list"></div></section>
+    <section id="rankings" class="section hidden">
+        <h2>Rankings Globais</h2>
+        <div id="ranking-list"></div>
+    </section>
+
+    <section id="live" class="section hidden">
+        <h2>Transmissões Live</h2>
+        <div id="live-container"></div>
+    </section>
+
+    <section id="arena" class="section hidden">
+        <h2>Torneios Arena</h2>
+        <div id="arena-container"></div>
+    </section>
+
     <section id="chat" class="section hidden">
-      <div id="chat-messages" style="height:300px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px"></div>
-      <input id="chat-input" placeholder="Mensagem..." /><button>Enviar</button>
+      <div id="chat-messages" style="height:300px; overflow-y:auto; background:rgba(0,0,0,0.2); padding:10px; border-radius:8px;"></div>
+      <div style="display:flex; gap:5px; margin-top:10px;">
+          <input id="chat-input" placeholder="Escreva..." style="flex:1; padding:10px; border-radius:8px; background:#222; color:#fff; border:1px solid #444;" />
+          <button onclick="sendChatMessage()" style="background:#00ff88; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;">></button>
+      </div>
     </section>
   </main>
 </div>
