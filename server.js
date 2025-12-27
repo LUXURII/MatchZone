@@ -35,7 +35,8 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 MatchZone v1.9.0 Online na porta ${PORT}`);
+  // Versão atualizada para refletir o progresso do projeto
+  console.log(`🚀 MatchZone v2.0.2 Online na porta ${PORT}`);
   if (process.env.MONGO_URI) {
     mongoose.connect(process.env.MONGO_URI).then(() => console.log('✅ DB Conectado')).catch(err => console.error(err));
   }
