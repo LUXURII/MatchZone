@@ -30,11 +30,14 @@ body{background:var(--bg-main);color:var(--text);font-family:Inter,system-ui,san
 
 /* SECTIONS */
 .section{margin-bottom:40px}
-.hidden{display:none !important} /* !important garante que esconda mesmo com flex/grid */
+/* A classe 'hidden' é controlada pelo JS para garantir que funcione em todos os layouts */
+.hidden{display:none !important} 
 
-/* CARDS */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px}
-.stat-card,.card,.profile-card{background:var(--bg-card);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow)}
+/* CARDS E CONTEÚDO NOVO (v1.2.0 styles) */
+.stats-grid,.benefits-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px}
+.stat-card,.card,.profile-card, .benefit-card{background:var(--bg-card);padding:20px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.benefit-card { border-left: 4px solid var(--green); } /* Adiciona a barra verde */
+
 
 .highlight-banner{margin-top:24px;padding:24px;background:linear-gradient(135deg,#0f3,#042);border-radius:var(--radius)}
 
@@ -53,17 +56,18 @@ body{background:var(--bg-main);color:var(--text);font-family:Inter,system-ui,san
 #chat-messages{height:300px;background:var(--bg-soft);padding:12px;overflow-y:auto;border-radius:var(--radius); border: 1px solid #222;}
 #chat-input{margin-top:10px;width:100%;padding:12px;background:var(--bg-soft);border:1px solid #333;border-radius:10px;color:var(--text)}
 
-/* MOBILE */
-.menu-btn{display:none}
+/* MOBILE RESPONSIVE */
+.menu-btn{display:none} /* Esconde o botão de menu em desktop */
 
 @media(max-width:900px){
-  .sidebar{position:fixed;left:-260px;top:0;bottom:0;height:100%;z-index:1000}
+  .sidebar{position:fixed;left:-260px;top:0;bottom:0;height:100%;z-index:1000; display: flex;}
   .sidebar.open{left:0}
   
-  /* AJUSTE AQUI: Mudamos de .show para .active para bater com o main.js */
+  /* CORREÇÃO CRÍTICA: Garante que o Overlay funcione com o main.js que usa .active */
   .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900}
   .overlay.active{display:block} 
   
-  .menu-btn{display:block}
+  .menu-btn{display:block} /* Mostra o botão de menu em mobile */
   .app{padding: 15px;}
+  .sidebar-logo { margin-bottom: 20px; } /* Ajuste de espaçamento no mobile */
 }
