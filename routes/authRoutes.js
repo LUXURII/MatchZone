@@ -4,8 +4,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../middlewares/auth');
 const User = require('../models/User');
+const Stats = require('../models/Stats'); // <-- IMPORTANTE: Importar o model de Stats
 
-// ROTA DE REGISTO (POST) - Chamada pelo seu register.html
+// ROTA DE REGISTO (POST)
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -14,11 +15,21 @@ router.post('/register', async (req, res) => {
 
     user = new User({ username, email, password });
 
-    // Encriptar a palavra-passe
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
 
     await user.save();
+
+    // NOVIDADE v1.3.1: Cria automaticamente a ficha de estatísticas do jogador
+    const newStats = new Stats({
+      user: user.id,
+      username: user.username,
+      elo: 1000,
+      wins: 0,
+      losses: 0
+    });
+    await newStats.save();
+
     res.status(201).json({ message: 'Conta criada com sucesso!' });
   } catch (err) {
     console.error(err);
@@ -26,7 +37,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ROTA DE LOGIN (POST)
+// ROTA DE LOGIN (POST) - (Mantém-se igual)
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -42,7 +53,7 @@ router.post('/login', async (req, res) => {
   } catch (err) { res.status(500).send('Erro no servidor'); }
 });
 
-// ROTA DE PERFIL (GET)
+// ROTA DE PERFIL (GET) - (Mantém-se igual)
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
