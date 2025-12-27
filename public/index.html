@@ -61,7 +61,6 @@
         <h1>MatchZone: A Plataforma Competitiva de eSports</h1>
         <p>Conecte-se, participe de torneios exclusivos, suba no ranking global e compita em tempo real com jogadores de verdade.</p>
         <div class="cta-group">
-          <!-- Melhor Fluxo de Usuário: Linkar para criar conta primeiro -->
           <button onclick="window.location.href='/register.html'" class="primary" style="padding: 10px 20px; border-radius: 8px; background: #00ff88; border: none; cursor: pointer; font-weight: bold;">
               Criar Conta Grátis
           </button>
@@ -82,7 +81,6 @@
           <strong>🔒 Jogo Justo</strong>
           <p style="font-size: 12px; opacity: 0.8;">Sistema Anti-Cheat e Matchmaking ELO.</p>
         </div>
-        <!-- NOVIDADE v1.4.1: Contador de usuários -->
         <div class="benefit-card" style="border-left: 4px solid #ffaa00;">
             <strong id="user-count-display">Carregando...</strong>
             <p style="font-size: 12px; opacity: 0.8;">Nossa comunidade global cresce a cada dia!</p>
@@ -96,20 +94,34 @@
       </div>
     </section>
 
-    <!-- 2. PERFIL -->
+    <!-- 2. PERFIL (v1.6.0) -->
     <section id="profile" class="section hidden">
       <div class="profile-card" style="text-align: center;">
-        <img src="i.pravatar.cc" style="border-radius: 50%; border: 3px solid #00ff88;" />
+        <img src="i.pravatar.cc" id="profile-avatar" style="border-radius: 50%; border: 3px solid #00ff88;" />
         <h2 id="userNameDisplay">Carregando... <span class="verified">✔</span></h2>
         <p class="muted" id="userHandleDisplay">@player</p>
         <div class="profile-stats" style="display: flex; justify-content: space-around; margin: 20px 0;">
-          <div><strong>Rank</strong><br><span>#12</span></div>
-          <div><strong>ELO</strong><br><span>1890</span></div>
-          <div><strong>Vitórias</strong><br><span>124</span></div>
+          <div><strong>Rank</strong><br><span id="profile-rank">#0</span></div>
+          <div><strong>ELO</strong><br><span id="profile-elo">0</span></div>
+          <div><strong>Vitórias</strong><br><span id="profile-wins">0</span></div>
         </div>
-        <button class="primary" style="width: 100%; padding: 12px; background: #00ff88; border: none; border-radius: 8px; font-weight: bold;">Editar Perfil</button>
+        <button class="primary" onclick="showSection('edit-profile')" style="width: 100%; padding: 12px; background: #00ff88; border: none; border-radius: 8px; font-weight: bold;">
+          Editar Perfil
+        </button>
       </div>
     </section>
+
+    <!-- 2.1. EDITAR PERFIL (v1.6.0) -->
+    <section id="edit-profile" class="section hidden">
+        <h1>Editar Perfil</h1>
+        <div class="card">
+            <label>Avatar URL:</label>
+            <input type="text" id="edit-avatar-url" placeholder="i.pravatar.cc" style="width: 100%; padding: 10px; margin-bottom: 15px;">
+            <button class="primary" onclick="saveProfileChanges()">Salvar Alterações</button>
+            <button onclick="showSection('profile')" style="background: #555; border: none; width: 100%; padding: 10px; margin-top: 10px;">Voltar</button>
+        </div>
+    </section>
+
 
     <!-- 3. RANKINGS -->
     <section id="rankings" class="section hidden">
@@ -163,13 +175,13 @@
     </section>
 
     <footer class="footer" style="text-align: center; padding: 30px 0; opacity: 0.4; font-size: 12px;">
-      © 2025 MatchZone eSports Platform • v1.5.0
+      © 2025 MatchZone eSports Platform • v1.6.0
     </footer>
 
   </main>
 </div>
 
-<!-- Scripts para a versão 1.5.0 -->
+<!-- Scripts para a versão 1.6.0 -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/main.js"></script>
 </body>
