@@ -15,6 +15,8 @@ function showSection(id, el) {
         el.classList.add('active');
     }
     if (id === 'rankings') loadRankingsReal();
+    if (id === 'arena') loadArenaContent();
+    if (id === 'live') loadLiveContent();
 }
 
 async function loadProfile() {
@@ -24,52 +26,76 @@ async function loadProfile() {
         if (res.ok) {
             const u = await res.json();
             document.querySelector("#userNameDisplay").innerText = u.username;
+            document.querySelector("#topbar-avatar").src = u.avatarUrl || 'i.pravatar.cc';
             document.getElementById('profile-avatar').src = u.avatarUrl || 'i.pravatar.cc';
-            document.getElementById('profile-bio').innerText = u.bio || '';
+            document.getElementById('profile-bio').innerText = u.bio || 'Bem-vindo ao MatchZone!';
             document.getElementById('edit-bio').value = u.bio || '';
         }
     } catch (err) { console.error(err); }
 }
 
-function compressAndSave(file, bio, btn) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        const img = new Image();
-        img.src = e.target.result;
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const size = 200;
-            canvas.width = size; canvas.height = size;
-            canvas.getContext('2d').drawImage(img, 0, 0, size, size);
-            sendUpdate(canvas.toDataURL('image/jpeg', 0.7), bio, btn);
-        };
-    };
-    reader.readAsDataURL(file);
+function loadArenaContent() {
+    const container = document.getElementById('arena-container');
+    const mocks = [
+        { title: '🏆 Premier League eSports', status: 'Inscrições Abertas', color: '#00ff88' },
+        { title: '⚽ Champions MatchZone', status: 'Em breve', color: '#ffaa00' }
+    ];
+    container.innerHTML = mocks.map(m => `
+        <div class="card" style="border-left: 4px solid ${m.color}; margin-bottom:10px;">
+            <h3>${m.title}</h3>
+            <span class="badge" style="background:${m.color}">${m.status}</span>
+        </div>
+    `).join('');
 }
 
-async function sendUpdate(avatar, bio, btn) {
-    const res = await fetch('/api/auth/profile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
-        body: JSON.stringify({ avatarUrl: avatar, bio })
-    });
-    if (res.ok) { alert("Sucesso!"); loadProfile(); showSection('profile'); }
-    btn.innerText = "Salvar Alterações"; btn.disabled = false;
+function loadLiveContent() {
+    document.getElementById('live-container').innerHTML = `
+        <div class="card" style="background:#000; text-align:center; padding:40px;">
+            <p style="color:red; font-weight:bold;">🔴 LIVE: Final Regional</p>
+            <small>Acompanhe em tempo real</small>
+        </div>
+    `;
 }
 
-function saveProfileChanges() {
+async function saveProfileChanges() {
     const btn = document.getElementById('save-profile-btn');
     const bio = document.getElementById('edit-bio').value;
     const file = document.getElementById('edit-avatar-file').files[0];
+    
     btn.innerText = "Processando..."; btn.disabled = true;
-    if (file) compressAndSave(file, bio, btn);
-    else sendUpdate(document.getElementById('profile-avatar').src, bio, btn);
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const res = await fetch('/api/auth/profile', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+                body: JSON.stringify({ avatarUrl: e.target.result, bio })
+            });
+            if (res.ok) { alert("Perfil atualizado!"); loadProfile(); showSection('profile'); }
+            btn.innerText = "Salvar Alterações"; btn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        const res = await fetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+            body: JSON.stringify({ bio })
+        });
+        if (res.ok) { alert("Bio atualizada!"); loadProfile(); showSection('profile'); }
+        btn.innerText = "Salvar Alterações"; btn.disabled = false;
+    }
 }
 
 async function loadRankingsReal() {
     const res = await fetch('/api/stats/rankings');
     const data = await res.json();
-    document.getElementById('ranking-list').innerHTML = data.map((p, i) => `<div>#${i+1} ${p.username} - ${p.elo} ELO</div>`).join('');
+    document.getElementById('ranking-list').innerHTML = data.map((p, i) => `
+        <div class="rank-item" style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px; margin-bottom:5px; border-radius:8px;">
+            <span>#${i+1} ${p.username}</span>
+            <strong style="color:#00ff88">${p.elo || 1000} ELO</strong>
+        </div>
+    `).join('');
 }
 
 async function loadUserCount() {
@@ -78,22 +104,24 @@ async function loadUserCount() {
     document.getElementById('user-count-display').innerText = `${data.count} Jogadores Ativos`;
 }
 
-function setupChat() {
-    const input = document.getElementById('chat-input'), btn = document.querySelector('#chat button');
-    if (!input || !btn) return;
-    btn.onclick = () => {
-        const text = input.value.trim();
-        if (text) { socket.emit('sendMessage', { user: document.querySelector("#userNameDisplay").innerText, text }); input.value = ""; }
-    };
+function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (text) {
+        socket.emit('sendMessage', { user: document.querySelector("#userNameDisplay").innerText, text });
+        input.value = "";
+    }
 }
 
 socket.on('receiveMessage', (d) => {
     const m = document.getElementById('chat-messages');
-    if (m) { m.innerHTML += `<p><strong>${d.user}:</strong> ${d.text}</p>`; m.scrollTop = m.scrollHeight; }
+    if (m) {
+        m.innerHTML += `<p style="margin-bottom:8px;"><small style="opacity:0.5">${d.time}</small> <strong>${d.user}:</strong> ${d.text}</p>`;
+        m.scrollTop = m.scrollHeight;
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadProfile(); loadUserCount(); setupChat();
+    loadProfile(); loadUserCount();
     document.querySelector('.logout').onclick = () => { localStorage.removeItem("token"); window.location.href = "/login.html"; };
 });
-      
