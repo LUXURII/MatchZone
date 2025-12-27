@@ -14,4 +14,14 @@ router.get('/rankings', async (req, res) => {
   }
 });
 
+// GET /api/stats/count (NOVIDADE v1.4.1)
+router.get('/count', async (req, res) => {
+  try {
+    const userCount = await Stats.countDocuments(); // Conta todos os documentos na coleção de estatísticas
+    res.json({ count: userCount });
+  } catch (err) {
+    res.status(500).json({ message: 'Erro ao contar usuários' });
+  }
+});
+
 module.exports = router;
