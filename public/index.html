@@ -2,9 +2,19 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <title>MatchZone</title>
+  <title>MatchZone | Elite eSports Platform</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="css/style.css" />
+  <!-- Estilos extras para componentes novos -->
+  <style>
+    .benefit-card, .stat-card, .card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #00ff88; }
+    .hero { text-align: center; padding: 30px 15px; background: linear-gradient(180deg, rgba(0,255,136,0.1) 0%, rgba(0,0,0,0) 100%); border-radius: 15px; margin-bottom: 20px; }
+    .hero h1 { font-size: 1.8rem; color: #00ff88; margin-bottom: 10px; }
+    .cta-group { display: flex; gap: 10px; justify-content: center; margin-top: 15px; }
+    .badge { background: #00ff88; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+    .rank-item { display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.03); margin-bottom: 5px; border-radius: 8px; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
 
@@ -23,7 +33,7 @@
       <a onclick="showSection('chat', this)">Chat</a>
     </nav>
 
-    <div class="logout">Logout</div>
+    <div class="logout" onclick="logout()">Sair da Conta</div>
   </aside>
 
   <!-- OVERLAY -->
@@ -35,57 +45,111 @@
     <div class="topbar">
       <button class="menu-btn" onclick="toggleMenu()">☰</button>
       <div class="topbar-right">
-        <span>🔔</span>
-        <img class="avatar" src="https://i.pravatar.cc/40" />
+        <span style="cursor:pointer">🔔</span>
+        <img class="avatar" src="i.pravatar.cc" />
       </div>
     </div>
 
+    <!-- 1. HOME / LANDING PAGE -->
     <section id="home" class="section">
-      <h1>Elite Football Arena</h1>
-      <div class="stats-grid">
-        <div class="stat-card">🤖 AI Analyst</div>
-        <div class="stat-card">🎮 Arena</div>
-      </div>
-      <div class="highlight-banner">Bons momentos da semana</div>
-    </section>
-
-    <section id="profile" class="section hidden">
-      <div class="profile-card">
-        <img src="https://i.pravatar.cc/100" />
-        <h2>PlayerX <span class="verified">✔</span></h2>
-        <p class="muted">@playerx</p>
-        <div class="profile-stats">
-          <div><strong>Rank</strong><span>#12</span></div>
-          <div><strong>ELO</strong><span>1890</span></div>
-          <div><strong>Wins</strong><span>124</span></div>
+      <div class="hero">
+        <h1>A Arena dos Campeões</h1>
+        <p>A plataforma competitiva definitiva para jogadores de elite em 2025.</p>
+        <div class="cta-group">
+          <button class="primary" style="padding: 10px 20px; border-radius: 8px; background: #00ff88; border: none; cursor: pointer; font-weight: bold;" onclick="showSection('arena')">Jogar Agora</button>
         </div>
-        <button class="primary">Follow</button>
+      </div>
+
+      <h3>Benefícios MatchZone</h3>
+      <div class="stats-grid">
+        <div class="benefit-card">
+          <strong>🏆 Torneios Diários</strong>
+          <p style="font-size: 12px; opacity: 0.8;">Compita por prêmios e reconhecimento global.</p>
+        </div>
+        <div class="benefit-card">
+          <strong>🤖 AI Analyst</strong>
+          <p style="font-size: 12px; opacity: 0.8;">Análise de desempenho em tempo real por IA.</p>
+        </div>
+      </div>
+
+      <div class="highlight-banner" style="background: #111; padding: 20px; border-radius: 12px; border: 1px solid #333;">
+        <span class="badge">DESTAQUE</span>
+        <h4 style="margin: 10px 0 5px 0;">Master League 2025</h4>
+        <p style="font-size: 13px; opacity: 0.7;">Inscrições abertas para o maior torneio da temporada.</p>
       </div>
     </section>
 
+    <!-- 2. PERFIL -->
+    <section id="profile" class="section hidden">
+      <div class="profile-card" style="text-align: center;">
+        <img src="i.pravatar.cc" style="border-radius: 50%; border: 3px solid #00ff88;" />
+        <h2 id="userNameDisplay">Carregando... <span class="verified">✔</span></h2>
+        <p class="muted" id="userHandleDisplay">@player</p>
+        <div class="profile-stats" style="display: flex; justify-content: space-around; margin: 20px 0;">
+          <div><strong>Rank</strong><br><span>#12</span></div>
+          <div><strong>ELO</strong><br><span>1890</span></div>
+          <div><strong>Vitórias</strong><br><span>124</span></div>
+        </div>
+        <button class="primary" style="width: 100%; padding: 12px; background: #00ff88; border: none; border-radius: 8px; font-weight: bold;">Editar Perfil</button>
+      </div>
+    </section>
+
+    <!-- 3. RANKINGS -->
     <section id="rankings" class="section hidden">
-      <h2>Rankings</h2>
-      <ul id="ranking-list"></ul>
-    </section>
-
-    <section id="live" class="section hidden">
-      <div class="live-player">
-        <span class="badge">LIVE</span>
-        <p>Player X vs Player Y</p>
-        <small>1080p · 1.2k espectadores</small>
+      <h2>Rankings Globais</h2>
+      <p style="font-size: 13px; opacity: 0.6; margin-bottom: 15px;">Atualizado em tempo real • Temporada 4</p>
+      <div id="ranking-list">
+        <!-- O JS preencherá aqui, mas deixamos um padrão real -->
+        <div class="rank-item"><span>#1 StormRider</span><strong>2850 ELO</strong></div>
+        <div class="rank-item"><span>#2 Vortex_Pro</span><strong>2720 ELO</strong></div>
+        <div class="rank-item"><span>#3 Nightm4re</span><strong>2690 ELO</strong></div>
       </div>
     </section>
 
+    <!-- 4. LIVE -->
+    <section id="live" class="section hidden">
+      <h2>Transmissões ao Vivo</h2>
+      <div class="live-player" style="background: #000; height: 200px; border-radius: 12px; display: flex; align-items: center; justify-content: center; position: relative;">
+        <span class="badge" style="position: absolute; top: 10px; left: 10px; background: red; color: white;">LIVE</span>
+        <p>Final Regional: Kings vs Titans</p>
+      </div>
+      <div style="margin-top: 15px;">
+        <small>🔴 1.2k assistindo agora</small>
+      </div>
+    </section>
+
+    <!-- 5. ARENA -->
     <section id="arena" class="section hidden">
-      <div class="card">Desafios em tempo real</div>
+      <h2>Arena de Competição</h2>
+      <div class="card">
+        <span class="badge">ABERTO</span>
+        <h4>Copa Iniciante MatchZone</h4>
+        <p style="font-size: 12px;">Entrada gratuita • Prêmio: 500 Créditos</p>
+        <button style="margin-top: 10px; background: transparent; border: 1px solid #00ff88; color: #00ff88; padding: 5px 10px; border-radius: 5px;">Participar</button>
+      </div>
+      <div class="card" style="opacity: 0.7;">
+        <span class="badge" style="background: #555;">EM BREVE</span>
+        <h4>Pro Circuit Elite</h4>
+        <p style="font-size: 12px;">Apenas para ELO 2000+</p>
+      </div>
     </section>
 
+    <!-- 6. CHAT -->
     <section id="chat" class="section hidden">
-      <div id="chat-messages"></div>
-      <input id="chat-input" placeholder="Escreve uma mensagem..." />
+      <h2>Chat da Comunidade</h2>
+      <div id="chat-messages" style="height: 300px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; margin-bottom: 10px;">
+        <p style="font-size: 13px; margin-bottom: 8px;"><strong style="color: #00ff88;">Sistema:</strong> Bem-vindo ao chat global!</p>
+        <p style="font-size: 13px; margin-bottom: 8px;"><strong>Vortex_Pro:</strong> Alguém para amistoso agora?</p>
+      </div>
+      <div style="display: flex; gap: 5px;">
+        <input id="chat-input" placeholder="Escreva uma mensagem..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #222; color: #fff;" />
+        <button style="background: #00ff88; border: none; padding: 0 15px; border-radius: 8px; font-weight: bold;">></button>
+      </div>
     </section>
 
-    <footer class="footer">© MatchZone · Powered by AI</footer>
+    <footer class="footer" style="text-align: center; padding: 30px 0; opacity: 0.4; font-size: 12px;">
+      © 2025 MatchZone eSports Platform • v1.2.0
+    </footer>
 
   </main>
 </div>
