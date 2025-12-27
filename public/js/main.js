@@ -1,5 +1,5 @@
 /* ==========================================
-   SISTEMA DE NAVEGAÇÃO E MENU (v1.2.0)
+   SISTEMA DE NAVEGAÇÃO E MENU (v1.3.0)
 ========================================== */
 
 function toggleMenu() {
@@ -23,7 +23,7 @@ function showSection(id, el) {
   if (el) el.classList.add('active');
 
   // Carrega dados específicos ao abrir a seção
-  if (id === 'rankings') loadRankingsMock();
+  if (id === 'rankings') loadRankingsReal(); // AGORA CHAMA A FUNÇÃO REAL
   if (id === 'arena') loadArenaMock();
 
   if (window.innerWidth < 900) {
@@ -33,28 +33,39 @@ function showSection(id, el) {
 }
 
 /* ==========================================
-   CONTEÚDO REALISTA (MOCK DATA v1.2.0)
+   CONTEÚDO DINÂMICO REAL (v1.3.0)
 ========================================== */
 
-function loadRankingsMock() {
+// Esta função agora faz uma requisição real para o backend
+async function loadRankingsReal() {
   const container = document.getElementById('ranking-list');
   if (!container) return;
 
-  const players = [
-    { pos: 1, name: 'StormRider', elo: 2850 },
-    { pos: 2, name: 'Vortex_Pro', elo: 2720 },
-    { pos: 3, name: 'Nightm4re', elo: 2690 },
-    { pos: 4, name: 'CyberKing', elo: 2550 },
-    { pos: 5, name: 'EliteGamer', elo: 2410 }
-  ];
+  container.innerHTML = '<div>Carregando rankings...</div>'; // Feedback visual
 
-  container.innerHTML = players.map(p => `
-    <div class="rank-item" style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.03); margin-bottom:5px; border-radius:8px;">
-      <span><strong>#${p.pos}</strong> ${p.name}</span>
-      <span style="color:#00ff88;">${p.elo} ELO</span>
-    </div>
-  `).join('');
+  try {
+    // Busca dados reais do endpoint que você criou no server.js
+    const res = await fetch('/api/stats/rankings'); 
+    const players = await res.json();
+
+    if (players.length === 0) {
+      container.innerHTML = '<p>Ainda não há jogadores no ranking. Crie uma conta para aparecer aqui!</p>';
+      return;
+    }
+
+    container.innerHTML = players.map((p, index) => `
+      <div class="rank-item" style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.03); margin-bottom:5px; border-radius:8px;">
+        <span><strong>#${index + 1}</strong> ${p.username}</span>
+        <span style="color:#00ff88;">${p.elo} ELO</span>
+      </div>
+    `).join('');
+
+  } catch (err) {
+    console.error("Erro ao carregar ranking real:", err);
+    container.innerHTML = '<p>Falha ao carregar ranking. Tente novamente mais tarde.</p>';
+  }
 }
+
 
 function loadArenaMock() {
   const container = document.getElementById('arena');
