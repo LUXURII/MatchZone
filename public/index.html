@@ -6,9 +6,9 @@
   <!-- Meta tag de viewport aprimorada para mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   
-  <!-- Adição obrigatória do Bootstrap 5 CSS -->
-  <link href="cdn.jsdelivr.net" rel="stylesheet">
-  <!-- Adição obrigatória do Bootstrap Icons -->
+  <!-- Adição obrigatória do Bootstrap 5 CSS (CORRIGIDO) -->
+  <link href="cdn.jsdelivr.net" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Adição obrigatória do Bootstrap Icons (CORRIGIDO) -->
   <link rel="stylesheet" href="cdn.jsdelivr.net">
   
   <link rel="stylesheet" href="css/style.css" />
@@ -73,7 +73,7 @@
           <i class="bi bi-chat-dots me-3"></i> Chat
         </a>
         <hr class="bg-secondary">
-        <a class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 text-muted small ripple-button" onclick="showSection('logout', this)">
+        <a class="list-group-item list-group-item-action bg-transparent text-muted small ripple-button" onclick="showSection('logout', this)">
           <i class="bi bi-box-arrow-right me-3"></i> Sair
         </a>
       </ul>
@@ -229,8 +229,8 @@
 </footer>
 
 
-<!-- Adição obrigatória do Bootstrap 5 JS Bundle (inclui Popper.js) -->
-<script src="cdn.jsdelivr.net"></script>
+<!-- Adição obrigatória do Bootstrap 5 JS Bundle (inclui Popper.js) (CORRIGIDO) -->
+<script src="cdn.jsdelivr.net" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/main.js"></script>
 </body>
