@@ -1,5 +1,5 @@
 /* ==========================================
-   SISTEMA DE NAVEGAÇÃO E MENU (v1.3.0)
+   SISTEMA DE NAVEGAÇÃO E MENU (v1.4.1)
 ========================================== */
 
 function toggleMenu() {
@@ -23,7 +23,7 @@ function showSection(id, el) {
   if (el) el.classList.add('active');
 
   // Carrega dados específicos ao abrir a seção
-  if (id === 'rankings') loadRankingsReal(); // AGORA CHAMA A FUNÇÃO REAL
+  if (id === 'rankings') loadRankingsReal(); 
   if (id === 'arena') loadArenaMock();
 
   if (window.innerWidth < 900) {
@@ -33,10 +33,10 @@ function showSection(id, el) {
 }
 
 /* ==========================================
-   CONTEÚDO DINÂMICO REAL (v1.3.0)
+   CONTEÚDO DINÂMICO REAL (v1.4.1)
 ========================================== */
 
-// Esta função agora faz uma requisição real para o backend
+// Busca dados reais do endpoint que você criou no server.js
 async function loadRankingsReal() {
   const container = document.getElementById('ranking-list');
   if (!container) return;
@@ -44,7 +44,6 @@ async function loadRankingsReal() {
   container.innerHTML = '<div>Carregando rankings...</div>'; // Feedback visual
 
   try {
-    // Busca dados reais do endpoint que você criou no server.js
     const res = await fetch('/api/stats/rankings'); 
     const players = await res.json();
 
@@ -64,6 +63,21 @@ async function loadRankingsReal() {
     console.error("Erro ao carregar ranking real:", err);
     container.innerHTML = '<p>Falha ao carregar ranking. Tente novamente mais tarde.</p>';
   }
+}
+
+// Função para buscar e exibir a contagem real de usuários (Social Proof)
+async function loadRealUserCount() {
+    try {
+        const res = await fetch('/api/stats/count');
+        const data = await res.json();
+        
+        const countElement = document.getElementById('user-count-display');
+        if (countElement) {
+            countElement.innerText = `${data.count} Jogadores Ativos`;
+        }
+    } catch (err) {
+        console.error("Erro ao carregar contador de usuários:", err);
+    }
 }
 
 
@@ -131,6 +145,7 @@ function logout() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadProfile();
+  loadRealUserCount(); // NOVIDADE v1.4.1: Carrega o contador real na inicialização
   const logoutBtn = document.querySelector('.logout');
   if (logoutBtn) logoutBtn.onclick = logout;
 });
